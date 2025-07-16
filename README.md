@@ -1,1 +1,1 @@
-# flatpak-mcp-server
+# Flatpak MCP Server in PHP
