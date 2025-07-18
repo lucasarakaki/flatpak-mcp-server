@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+
+<?php
+
+require_once __DIR__.'/../bootstrap.php';
+
+use App\Server\Mcp\McpServer;
+use PhpMcp\Server\Transports\StdioServerTransport;
+
+try {
+    $mcpServer = new McpServer($config); # $config is defined in bootstrap.php
+    $server = $mcpServer->serverMake();
+
+    $server->discover(
+        basePath: __DIR__.'/..',
+        scanDirs: ['app'],
+        excludeDirs: ['storage', 'config', 'vendor', 'bin'],
+        saveToCache: true,
+    );
+
+    $transport = new StdioServerTransport();
+    $server->listen($transport);
+} catch (\Throwable $th) {
+    fwrite(STDERR, "[MCP SERVER CRITICAL ERROR]\n");
+    fwrite(STDERR, 'Error: '.$th->getMessage()."\n");
+    fwrite(STDERR, 'File: '.$th->getFile()."\n");
+    fwrite(STDERR, $th->getTraceAsString()."\n");
+
+    exit(1);
+}
